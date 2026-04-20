@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Pgvector\Laravel\HasNeighbors; // <-- Corrected Trait
+use Pgvector\Laravel\HasNeighbors;
 use Pgvector\Laravel\Vector;
-use Pgvector\Laravel\Distance;     // <-- Added for cleaner distance math
+use Pgvector\Laravel\Distance;
 
 class Paper extends Model
 {
-    use HasNeighbors; // <-- Corrected Trait
+    use HasNeighbors; 
 
     public $timestamps = false; 
+    public $incrementing = false;
+    protected $keyType = 'string';
     
     protected $casts = [
         'embedding' => Vector::class,
@@ -19,9 +21,8 @@ class Paper extends Model
 
     public function getRecommendations()
     {
-        // This uses pgvector's native method to calculate Cosine Similarity
         return $this->nearestNeighbors('embedding', Distance::Cosine)
-                    ->where('id', '!=', $this->id) // Exclude the clicked paper itself
+                    ->where('id', '!=', $this->id)
                     ->take(5)
                     ->get();
     }

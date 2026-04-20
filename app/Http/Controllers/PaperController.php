@@ -20,14 +20,17 @@ class PaperController extends Controller
         return view('papers.index', compact('results'));
     }
 
-    public function show($id)
+    public function show($id, PaperSearchService $searchService)
     {
-        // Fetches from PostgreSQL
-        $paper = Paper::findOrFail($id);
+        $bqDetails = $searchService->findById($id);
+
+        $paper = Paper::find($id);
         
-        // Executes pgvector cosine distance search
-        $recommendations = $paper->getRecommendations();
+        $recommendations = [];
+        if ($paper) {
+            $recommendations = $paper->getRecommendations();
+        }
         
-        return view('papers.show', compact('paper', 'recommendations'));
+        return view('papers.show', compact('bqDetails', 'paper', 'recommendations', 'id'));
     }
 }

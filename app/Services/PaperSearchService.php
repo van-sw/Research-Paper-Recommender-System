@@ -11,7 +11,7 @@ class PaperSearchService
 
     public function __construct()
     {
-        // No keyFilePath needed! ADC handles the authentication.
+
         $this->bigQuery = new BigQueryClient([
             'projectId' => config('services.bigquery.project_id')
         ]);
@@ -30,5 +30,24 @@ class PaperSearchService
 
         $jobConfig = $this->bigQuery->query($str)->parameters(['query' => $query]);
         return $this->bigQuery->runQuery($jobConfig);
+    }
+
+    public function findById($id)
+    {
+        $projectId = config('services.bigquery.project_id');
+        
+        $str = "SELECT id, title, abstract, year, authors, n_citation 
+                FROM `{$projectId}.{$this->dataset}.original_papers`
+                WHERE LOWER(TRIM(CAST(id AS STRING))) = LOWER(TRIM(CAST(@id AS STRING))) 
+                LIMIT 1";
+
+        $jobConfig = $this->bigQuery->query($str)->parameters(['id' => trim($id)]);
+        $results = $this->bigQuery->runQuery($jobConfig);
+
+        foreach ($results as $row) {
+            return $row;
+        }
+        
+        return null;
     }
 }

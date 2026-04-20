@@ -19,7 +19,7 @@
 <body>
 
     <div class="search-box">
-        <h1>🔍 Academic Graph Search</h1>
+        <h1>🔍 Academic Papers Search</h1>
         <form action="{{ route('papers.index') }}" method="GET">
             <input type="text" name="q" placeholder="Search millions of papers (e.g., machine learning)..." value="{{ request('q') }}" required>
             <button type="submit">Search</button>
@@ -27,7 +27,7 @@
     </div>
 
     @if(isset($results) && count($results) > 0)
-        <h2>Top Results (Powered by BigQuery)</h2>
+        <h2>Top Results</h2>
         @foreach($results as $row)
             <div class="result-card">
                 <a href="{{ route('papers.show', $row['id']) }}">{{ $row['title'] }}</a>
