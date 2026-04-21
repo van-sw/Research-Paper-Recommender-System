@@ -26,4 +26,9 @@ class Paper extends Model
                     ->take(5)
                     ->get();
     }
+
+    public function scopeDataset($query)
+    {
+        return $query->select(['id', 'title', 'year']);
+    }
 }
